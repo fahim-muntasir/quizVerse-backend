@@ -7,7 +7,7 @@ export const createQuiz = async ({
   category,
   duration,
   difficulty,
-  userId,
+  user,
 }: QuizDetails) => {
   try {
     const createdQuiz = await Quiz.create({
@@ -16,7 +16,7 @@ export const createQuiz = async ({
       category,
       duration,
       difficulty,
-      userId,
+      user,
     });
 
     return createdQuiz;

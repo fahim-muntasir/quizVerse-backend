@@ -11,8 +11,8 @@ const quizSchema = new mongoose.Schema(
       enum: ["Easy", "Medium", "Hard"],
       required: true,
     },
-    questionIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
-    userId: {
+    questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -20,5 +20,7 @@ const quizSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+// Infer the type from the schema
+export type QuizType = mongoose.InferSchemaType<typeof quizSchema>;
 
 export const Quiz = mongoose.model("Quiz", quizSchema);

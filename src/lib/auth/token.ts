@@ -17,6 +17,11 @@ export const tokenGenerator = async (payload: object): Promise<string> => {
 
     return token;
   } catch (error) {
+    // Handle invalid payload
+    if (error instanceof jwt.JsonWebTokenError) {
+      throw createHttpError(400, `Invalid payload: ${(error as Error).message}`);
+    }
+    
     throw createHttpError(500, `Token generation failed: ${(error as Error).message}`);
   }
 };
@@ -32,6 +37,15 @@ export const tokenValidator = async (token: string): Promise<object | string> =>
 
     return decoded;
   } catch (error) {
+    // Handle token expiration
+    if (error instanceof jwt.TokenExpiredError) {
+      throw createHttpError(401, "Token has expired.");
+    }
+    // Handle invalid or malformed token
+    if (error instanceof jwt.JsonWebTokenError) {
+      throw createHttpError(400, "Invalid token.");
+    }
+
     throw createHttpError(500, `Token validation failed: ${(error as Error).message}`);
   }
 };

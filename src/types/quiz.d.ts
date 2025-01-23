@@ -5,8 +5,8 @@ export type QuizDetails = {
   description: string;
   category: string;
   duration: number;
-  difficulty: string;
-  userId: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+  user: string;
 };
 
 export type QuestionTypeWithQuizId = QuestionType & {

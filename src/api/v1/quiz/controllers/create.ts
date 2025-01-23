@@ -6,6 +6,7 @@ import {
 import { createQuiz } from "../../../../lib/quiz";
 import { successResponse } from "../../../../utils/responseHelper";
 import { createQuestionBulk } from "../../../../lib/question";
+import { updateQuiz } from "../../../../lib/quiz";
 
 export const createQuizController = async (
   req: Request,
@@ -22,7 +23,7 @@ export const createQuizController = async (
       category: data.category,
       duration: data.duration,
       difficulty: data.difficulty,
-      userId: req.user?.id || "",
+      user: req.user?.id || "",
     });
 
     // generate question data for bulk creation
@@ -33,6 +34,9 @@ export const createQuizController = async (
 
     // question creation
     const createdQuestions = await createQuestionBulk(questionData);
+
+    // update quiz with questions id
+    await updateQuiz(quiz.id, { questions: createdQuestions.map((q) => q.id) });
 
     // create all links for response
     const links = {
@@ -47,7 +51,7 @@ export const createQuizController = async (
       category: quiz.category,
       duration: quiz.duration,
       difficulty: quiz.difficulty,
-      userId: quiz.userId,
+      user: quiz.user,
       createdAt: quiz.createdAt,
       updatedAt: quiz.updatedAt,
       questions: createdQuestions,

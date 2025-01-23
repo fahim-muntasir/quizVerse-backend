@@ -38,5 +38,15 @@ export const quizCreationSchema = z.object({
 // Infer the type from the schema
 export type QuizCreationType = z.infer<typeof quizCreationSchema>;
 
+// Create a schema for updates by making all fields optional
+export const quizUpdateSchema = quizCreationSchema
+  .omit({ questions: true })
+  .partial();
+
+// Infer the type for quiz updates
+export type QuizUpdateType = z.infer<typeof quizUpdateSchema>;
+
 // Extract the type for a single question
-export type QuestionType = z.infer<typeof quizCreationSchema>["questions"][number];
+export type QuestionType = z.infer<
+  typeof quizCreationSchema
+>["questions"][number];
