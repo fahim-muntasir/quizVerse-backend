@@ -8,12 +8,22 @@ type Links = {
   [key: string]: string | undefined;
 };
 
+type Pagination = { // TODO: it will replace
+  page: number;
+  limit: number;
+  totalPage: number;
+  totalItems: number;
+  nextPage?: number;
+  prevPage?: number;
+};
+
 export const successResponse = <T>(
   res: Response,
   data: T,
   message = "Success",
   code = 200,
-  links?: Links
+  links?: Links,
+  pagination?: Pagination
 ) => {
   res.status(code).json({
     success: true,
@@ -21,6 +31,7 @@ export const successResponse = <T>(
     message,
     data,
     links,
+    pagination,
   });
 };
 

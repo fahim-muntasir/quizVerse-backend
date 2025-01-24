@@ -17,7 +17,6 @@ export const updateQuizController = async (
   
   try {
     const data: QuizUpdateType = quizUpdateSchema.parse(req.body);
-    console.log(data);
 
     // update quiz with questions id
     const updatedQuiz = await updateQuiz(quizId, {
