@@ -12,6 +12,7 @@ import {
   updateQuizController,
   deleteQuizController,
   getQuizController,
+  getSingleQuizController,
 } from "../api/v1/quiz";
 
 router.get("/health", (_req: Request, res: Response) => {
@@ -29,6 +30,7 @@ router.route("/v1/quizzes").get(getQuizController);
 router.route("/v1/quizzes").post(auth, createQuizController);
 router
   .route("/v1/quizzes/:id")
+  .get(getSingleQuizController)
   .patch(auth, ownership("Quiz"), updateQuizController)
   .delete(auth, ownership("Quiz"), deleteQuizController);
 
