@@ -35,8 +35,17 @@ export const createQuizController = async (
     // question creation
     const createdQuestions = await createQuestionBulk(questionData);
 
+    // total marks calculation
+    const totalMarks = createdQuestions.reduce(
+      (acc, curr) => acc + curr.marks,
+      0
+    );
+
     // update quiz with questions id
-    await updateQuiz(quiz.id, { questions: createdQuestions.map((q) => q.id) });
+    const updatedQuiz = await updateQuiz(quiz.id, {
+      totalMarks,
+      questions: createdQuestions.map((q) => q.id),
+    });
 
     // create all links for response
     const links = {
@@ -45,16 +54,18 @@ export const createQuizController = async (
     };
 
     const responseData = {
-      id: quiz.id,
-      title: quiz.title,
-      description: quiz.description,
-      category: quiz.category,
-      duration: quiz.duration,
-      difficulty: quiz.difficulty,
-      user: quiz.user,
-      createdAt: quiz.createdAt,
-      updatedAt: quiz.updatedAt,
-      questions: createdQuestions,
+      id: updatedQuiz.id,
+      title: updatedQuiz.title,
+      description: updatedQuiz.description,
+      category: updatedQuiz.category,
+      duration: updatedQuiz.duration,
+      difficulty: updatedQuiz.difficulty,
+      totalMarks: updatedQuiz.totalMarks,
+      status: updatedQuiz.status,
+      user: updatedQuiz.user,
+      createdAt: updatedQuiz.createdAt,
+      updatedAt: updatedQuiz.updatedAt,
+      questions: updatedQuiz.questions,
     };
 
     // send final response

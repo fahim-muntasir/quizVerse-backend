@@ -36,7 +36,7 @@ const authSchema = new Schema(
       default: "user",
     },
   },
-  { timestamps: true }
+  { timestamps: true, id: true }
 );
 
 export const Auth = model("User", authSchema);

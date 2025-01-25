@@ -30,6 +30,7 @@ export const findAllItems = async ({
 
     // Use the search condition in the query
     const data = await Quiz.find(searchCondition)
+      .select("-__v")
       .sort(sortFilter)
       .skip((page - 1) * limit)
       .limit(limit)

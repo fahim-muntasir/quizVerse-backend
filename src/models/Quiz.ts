@@ -11,6 +11,12 @@ const quizSchema = new mongoose.Schema(
       enum: ["Easy", "Medium", "Hard"],
       required: true,
     },
+    totalMarks: { type: Number, default: 0 },
+    status: {
+      type: String,
+      enum: ["Active", "Deactive", "Pending"],
+      default: "Active",
+    },
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -18,7 +24,7 @@ const quizSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true, id: true }
 );
 // Infer the type from the schema
 export type QuizType = mongoose.InferSchemaType<typeof quizSchema>;

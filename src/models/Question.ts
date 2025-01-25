@@ -21,6 +21,6 @@ const questionSchema = new mongoose.Schema({
   },
   marks: { type: Number, min: 1, required: true },
   quizId: { type: mongoose.Schema.Types.ObjectId, ref: "Quiz", required: true },
-}, { timestamps: true });
+}, { timestamps: true, id: true });
 
 export const Question = mongoose.model("Question", questionSchema);
