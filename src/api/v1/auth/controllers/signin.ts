@@ -46,6 +46,7 @@ export const signInController = async (
 
     const responseData = {
       token,
+      user: payload,
     }
 
     // send the final response

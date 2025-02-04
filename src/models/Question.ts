@@ -23,4 +23,7 @@ const questionSchema = new mongoose.Schema({
   quizId: { type: mongoose.Schema.Types.ObjectId, ref: "Quiz", required: true },
 }, { timestamps: true, id: true });
 
+// Infer the type from the schema
+export type QuestionType = mongoose.InferSchemaType<typeof questionSchema>;
+
 export const Question = mongoose.model("Question", questionSchema);

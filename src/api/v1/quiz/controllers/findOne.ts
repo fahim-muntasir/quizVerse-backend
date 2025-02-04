@@ -19,7 +19,7 @@ export const getSingleQuizController = async (
 
     // create response data
     const data = {
-      id: quiz.id,
+      id: quiz._id,
       title: quiz.title,
       description: quiz.description,
       category: quiz.category,

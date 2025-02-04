@@ -14,6 +14,7 @@ import {
   getQuizController,
   getSingleQuizController,
 } from "../api/v1/quiz";
+import { createResultController, getSingleResultController } from "../api/v1/result";
 
 router.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({
@@ -33,5 +34,9 @@ router
   .get(getSingleQuizController)
   .patch(auth, ownership("Quiz"), updateQuizController)
   .delete(auth, ownership("Quiz"), deleteQuizController);
+
+// result routes
+router.route("/v1/:id/result").get(auth, getSingleResultController);
+router.route("/v1/result").post(auth, createResultController);
 
 export default router;

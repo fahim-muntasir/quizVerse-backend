@@ -34,7 +34,10 @@ export const findAllItems = async ({
       .sort(sortFilter)
       .skip((page - 1) * limit)
       .limit(limit)
-      // .populate("authors", "name email");
+      .populate({
+        path: "questions",
+        select: "-__v"
+      });
 
     // Fetch total count of documents with the search condition
     const totalItems = await Quiz.countDocuments(searchCondition);
