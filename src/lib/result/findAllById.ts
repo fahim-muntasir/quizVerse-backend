@@ -2,17 +2,10 @@ import { Result } from "../../models";
 import createHttpError from "http-errors";
 
 // Function to find a single quiz by ID
-export const findSingleItem = async ({
-  quizId,
-  userId,
-}: {
-  quizId: string;
-  userId: string;
-}) => {
+export const findSingleItem = async ({ quizId }: { quizId: string }) => {
   try {
-    const result = await Result.findOne({
+    const result = await Result.find({
       quiz: quizId,
-      user: userId,
     }).populate("results.question");
 
     if (!result) {
