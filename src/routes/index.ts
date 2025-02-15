@@ -23,6 +23,7 @@ import { getCheckParticipateController } from "../api/v1/participates";
 router.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({
     health: "Ok",
+    msg: "Hello world! This is new text!"
   });
 });
 
