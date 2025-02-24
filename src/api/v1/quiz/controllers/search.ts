@@ -1,12 +1,12 @@
 import { Response, Request, NextFunction } from "express";
-import { findAllItems } from "../../../../lib/quiz";
+import { searchItems } from "../../../../lib/quiz";
 import {
   paginationGenerate,
   generatePaginationLinks,
 } from "../../../../utils/pagination";
 import { successResponse } from "../../../../utils/responseHelper";
 
-export const getQuizController = async (
+export const searchQuizController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -21,8 +21,36 @@ export const getQuizController = async (
   const difficulty = (req.query.difficulty as string) || "";
   const duration = +(req.query.duration as string) || 1;
 
+  if (searchQuery === "") {
+    const { pagination, totalPage } = paginationGenerate({
+      page,
+      limit,
+    });
+
+    const links = generatePaginationLinks({
+      path: req.baseUrl + req.path,
+      page,
+      totalPage,
+      limit,
+      sortType,
+      sortBy,
+      searchQuery,
+      status,
+    });
+
+    successResponse(
+      res,
+      [],
+      "Quizzes searched successfully",
+      201,
+      links,
+      pagination
+    );
+    return;
+  }
+
   try {
-    const { data, totalItems } = await findAllItems({
+    const { data, totalItems } = await searchItems({
       page,
       limit,
       sortType,
@@ -52,10 +80,11 @@ export const getQuizController = async (
     });
 
     // send final response
+
     successResponse(
       res,
       data,
-      "Quizzes fetched successfully",
+      "Quizzes searched successfully",
       201,
       links,
       pagination

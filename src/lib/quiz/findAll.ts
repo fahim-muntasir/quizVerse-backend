@@ -7,28 +7,44 @@ export const findAllItems = async ({
   sortType = "desc",
   searchQuery = "",
   status = "",
+  category = "",
+  difficulty = "",
+  duration = 1,
 }) => {
   try {
+    // Sort filter
     const sortFilter: [string, 1 | -1][] = [[sortBy, sortType === "desc" ? -1 : 1]];
 
-    // Create a search condition based on the title or description
-    const searchCondition = searchQuery
-      ? {
-          $and: [
-            {
-              $or: [
-                { title: { $regex: new RegExp(searchQuery, "i") } },
-                { description: { $regex: new RegExp(searchQuery, "i") } },
-              ],
-            },
-            status ? { status } : {},
-          ],
-        }
-      : status
-      ? { status }
-      : {};
+    // Build the search condition dynamically
+    const searchCondition: any = {};
 
-    // Use the search condition in the query
+    if (searchQuery) {
+      searchCondition.$or = [
+        { title: { $regex: new RegExp(searchQuery, "i") } },
+        { description: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+
+    if (status) {
+      searchCondition.status = status;
+    }
+
+    if (category) {
+      searchCondition.category = category;
+    }
+
+    if (difficulty) {
+      searchCondition.difficulty = difficulty;
+    }
+
+    // if (duration) {
+    //   searchCondition.duration = duration;
+    // }
+
+    // Log the search condition for debugging
+    console.log("Search Condition:", searchCondition);
+
+    // Fetch data with the search condition
     const data = await Quiz.find(searchCondition)
       .select("-__v")
       .sort(sortFilter)
@@ -39,11 +55,15 @@ export const findAllItems = async ({
         select: "-__v"
       });
 
+    // Log the fetched data for debugging
+    console.log("Fetched Data:", data);
+
     // Fetch total count of documents with the search condition
     const totalItems = await Quiz.countDocuments(searchCondition);
 
     return { data, totalItems };
   } catch (error) {
+    console.error("Error in findAllItems:", error);
     throw error;
   }
 };

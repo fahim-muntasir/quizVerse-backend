@@ -13,6 +13,8 @@ import {
   deleteQuizController,
   getQuizController,
   getSingleQuizController,
+  createBulkQuizController,
+  searchQuizController,
 } from "../api/v1/quiz";
 import {
   createResultController,
@@ -23,7 +25,7 @@ import { getCheckParticipateController } from "../api/v1/participates";
 router.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({
     health: "Ok",
-    msg: "Hello world! This is new text!"
+    msg: "Hello world! This is new text!",
   });
 });
 
@@ -34,11 +36,15 @@ router.route("/v1/auth/signin").post(signInController);
 // quiz CRUD routes
 router.route("/v1/quizzes").get(getQuizController);
 router.route("/v1/quizzes").post(auth, createQuizController);
+router.route("/v1/quizzes/bulk").post(auth, createBulkQuizController);
 router
-  .route("/v1/quizzes/:id")
-  .get(getSingleQuizController)
-  .patch(auth, ownership("Quiz"), updateQuizController)
-  .delete(auth, ownership("Quiz"), deleteQuizController);
+.route("/v1/quizzes/:id")
+.get(getSingleQuizController)
+.patch(auth, ownership("Quiz"), updateQuizController)
+.delete(auth, ownership("Quiz"), deleteQuizController);
+
+// search quiz route
+router.route("/v1/search/quizzes").get(searchQuizController);
 
 // result routes
 router.route("/v1/:id/result").get(auth, getSingleResultController);
