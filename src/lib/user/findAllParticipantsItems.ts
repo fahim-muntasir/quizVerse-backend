@@ -1,7 +1,7 @@
 import { Quiz } from "../../models";
 import { Result } from "../../models";
 
-export const findAllItems = async ({
+export const findAllParticipantsItems = async ({
   page = 1,
   limit = 10,
   sortBy = "createdAt",
@@ -23,7 +23,7 @@ export const findAllItems = async ({
 
     if (userId) {
       const participatedQuizzes = await Result.distinct("quiz", { user: userId });
-      searchCondition._id = { $nin: participatedQuizzes };
+      searchCondition._id = { $in: participatedQuizzes };
     }
 
     if (searchQuery) {

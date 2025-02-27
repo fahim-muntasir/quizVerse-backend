@@ -21,6 +21,7 @@ import {
   getSingleResultController,
 } from "../api/v1/result";
 import { getCheckParticipateController } from "../api/v1/participates";
+import { getParticipantsQuizController } from "../api/v1/user";
 
 router.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({
@@ -54,5 +55,8 @@ router.route("/v1/result").post(auth, createResultController);
 router
   .route("/v1/:id/checkParticipates")
   .get(auth, getCheckParticipateController);
+
+// routes for users
+router.route("/v1/users/participants/:userId").get(getParticipantsQuizController);
 
 export default router;

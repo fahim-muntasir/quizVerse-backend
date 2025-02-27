@@ -1,14 +1,12 @@
 import { Response, Request, NextFunction } from "express";
-import { findAllItems } from "../../../../lib/quiz";
+import { findAllParticipantsItems } from "../../../../lib/user/findAllParticipantsItems";
 import {
   paginationGenerate,
   generatePaginationLinks,
 } from "../../../../utils/pagination";
 import { successResponse } from "../../../../utils/responseHelper";
-import { tokenValidator } from "../../../../lib/auth";
-import { isUserType } from "../../../../utils/typeGuards";
 
-export const getQuizController = async (
+export const getParticipantsQuizController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -22,25 +20,10 @@ export const getQuizController = async (
   const category = (req.query.category as string) || "";
   const difficulty = (req.query.difficulty as string) || "";
   const duration = +(req.query.duration as string) || 1;
-  let userId = "";
+  let userId = req.params?.userId || "";
 
   try {
-    if (req.headers.authorization) {
-      const token = req.headers.authorization.split(" ")[1];
-
-      const decoded = await tokenValidator(token);
-
-      // Use the type guard to validate `decoded`
-      if (!isUserType(decoded)) {
-        userId = "";
-      }
-
-      if (isUserType(decoded)) {
-        userId = decoded.id;
-      }
-    }
-
-    const { data, totalItems } = await findAllItems({
+    const { data, totalItems } = await findAllParticipantsItems({
       page,
       limit,
       sortType,
