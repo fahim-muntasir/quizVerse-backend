@@ -21,7 +21,8 @@ import {
   getSingleResultController,
 } from "../api/v1/result";
 import { getCheckParticipateController } from "../api/v1/participates";
-import { getParticipantsQuizController } from "../api/v1/user";
+import { getParticipantsQuizController, getAllItemsByIdController } from "../api/v1/user";
+import { getTopParticipantsQuizController } from "../api/v1/leaderboard";
 
 router.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({
@@ -58,5 +59,9 @@ router
 
 // routes for users
 router.route("/v1/users/participants/:userId").get(getParticipantsQuizController);
+router.route("/v1/users/quizzes/:userId").get(getAllItemsByIdController);
+
+// top participant
+router.route("/v1/topparticipants").get(getTopParticipantsQuizController);
 
 export default router;

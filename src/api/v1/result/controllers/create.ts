@@ -13,7 +13,6 @@ export const createResultController = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(req.body);
   try {
     const data: ResultInputType = resultSchema.parse(req.body);
     const selectedAnswers = data.selectedAnswers;
@@ -21,6 +20,7 @@ export const createResultController = async (
     const quiz = await findSingleItem(data.quizId);
 
     let totalMarks = 0;
+    let totalQuizMarks = 0;
     let correctAnswerCount = 0;
 
     const results = quiz.questions.map((question) => {
@@ -33,6 +33,8 @@ export const createResultController = async (
         totalMarks += question.marks;
         correctAnswerCount++;
       }
+
+      totalQuizMarks += question.marks;
       return {
         question: question._id,
         isCorrectAnswer: isCorrect,
@@ -43,6 +45,7 @@ export const createResultController = async (
       user: req.user?.id,
       quiz: quiz._id,
       totalMarks,
+      totalQuizMarks,
       totalQuestion: quiz.questions.length,
       correctAnswer: correctAnswerCount,
       selectedAnswers: data.selectedAnswers,
@@ -59,6 +62,7 @@ export const createResultController = async (
       user: createdResult.user,
       quiz: createdResult.quiz,
       totalMarks: createdResult.totalMarks,
+      totalQuizMarks: createdResult.totalQuizMarks,
       totalQuestion: createdResult.totalQuestion,
       correctAnswer: createdResult.correctAnswer,
       selectedAnswers: createdResult.selectedAnswers,

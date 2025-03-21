@@ -4,6 +4,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface ResultType extends Document {
   takenTime: number;
   totalMarks: number;
+  totalQuizMarks: number;
   isPublished: boolean;
   selectedAnswers: Record<string, string[]>;
   results: {
@@ -21,6 +22,7 @@ const resultSchema = new Schema<ResultType>(
   {
     takenTime: { type: Number, required: true },
     totalMarks: { type: Number, default: 0 },
+    totalQuizMarks: { type: Number, default: 0 },
     isPublished: { type: Boolean, default: true },
     totalQuestion: { type: Number, require: true },
     correctAnswer: { type: Number, required: true },
