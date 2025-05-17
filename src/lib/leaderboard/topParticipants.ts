@@ -12,6 +12,7 @@ export async function topParticipants({limit = 10}: {limit?: number}): Promise<T
           totalMarks: { $sum: "$totalMarks" },
           totalQuizMarks: { $sum: "$totalQuizMarks" },
           totalAttempts: { $sum: 1 },
+          createdAt: { $min: "$createdAt" },
         },
       },
       {
@@ -26,7 +27,7 @@ export async function topParticipants({limit = 10}: {limit?: number}): Promise<T
         $unwind: "$user",
       },
       {
-        $sort: { totalScore: -1 },
+        $sort: { totalMarks: -1, createdAt: 1 },
       },
       {
         $project: {
@@ -38,6 +39,7 @@ export async function topParticipants({limit = 10}: {limit?: number}): Promise<T
           totalMarks: 1,
           totalAttempts: 1,
           totalQuizMarks: 1,
+          createdAt: 1,
         },
       },
       {

@@ -1,5 +1,4 @@
-import { Quiz } from "../../models";
-import { Result } from "../../models";
+import { Quiz, Result } from "../../models";
 
 export const findAllItems = async ({
   page = 1,
@@ -21,8 +20,11 @@ export const findAllItems = async ({
 
     const searchCondition: any = {};
 
+    // participants should not see the quizzes they have already participated in
     if (userId) {
-      const participatedQuizzes = await Result.distinct("quiz", { user: userId });
+      const participatedQuizzes = await Result.distinct("quiz", {
+        user: userId,
+      });
       searchCondition._id = { $nin: participatedQuizzes };
     }
 
@@ -49,11 +51,8 @@ export const findAllItems = async ({
     //   searchCondition.duration = duration;
     // }
 
-    // Log the search condition for debugging
-    console.log("Search Condition:", searchCondition);
-
     // Fetch data with the search condition
-    const data = await Quiz.find(searchCondition)
+    const quizzes = await Quiz.find(searchCondition)
       .select("-__v")
       .sort(sortFilter)
       .skip((page - 1) * limit)
@@ -63,13 +62,23 @@ export const findAllItems = async ({
         select: "-__v",
       });
 
-    // Log the fetched data for debugging
-    console.log("Fetched Data:", data);
+    // Count participants for each quiz
+    const quizzesWithParticipationStatus = await Promise.all(
+      quizzes.map(async (quiz) => {
+        const totalParticipants = await Result.countDocuments({ quiz: quiz._id });
+
+        return {
+          ...quiz.toObject(),
+          isParticipated: false,
+          totalParticipants,
+        };
+      })
+    );
 
     // Fetch total count of documents with the search condition
     const totalItems = await Quiz.countDocuments(searchCondition);
 
-    return { data, totalItems };
+    return { data: quizzesWithParticipationStatus, totalItems };
   } catch (error) {
     console.error("Error in findAllItems:", error);
     throw error;

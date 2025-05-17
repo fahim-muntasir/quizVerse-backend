@@ -7,6 +7,8 @@ import { successResponse } from "../../../../utils/responseHelper";
 import { findSingleItem } from "../../../../lib/quiz";
 import { createResult } from "../../../../lib/result";
 import { ResultType } from "../../../../models";
+import { getIo } from "../../../../socket/socket";
+import { topParticipants } from "../../../../lib/leaderboard";
 
 export const createResultController = async (
   req: Request,
@@ -69,6 +71,12 @@ export const createResultController = async (
       results: createdResult.results,
       takenTime: createdResult.takenTime,
     };
+
+    // get top 10 participants
+    const participants = await topParticipants({ limit: 10 });
+
+    // send response to socket
+    getIo().emit("topParticipants", participants);
 
     // Create all links for response
     const links = {
