@@ -16,11 +16,13 @@ export const initializeSocket = (server: HttpServer) => {
 
     socket.on("join-room", ({ roomId, user }) => {
       socket.join(roomId);
-      console.log(`${user.name} joined room ${roomId} user id: ${user.id}`);
+      console.log(
+        `${user.name} joined room ${roomId} user id: ${user.id} socket id: ${socket.id}`
+      );
 
       socket.data.roomId = roomId;
       socket.data.userId = user.id;
-
+      console.log("sockets room joined", socket.rooms);
       // Notify others in the room
       io?.to(roomId).emit("user-joined", { roomId, user });
     });
@@ -40,6 +42,21 @@ export const initializeSocket = (server: HttpServer) => {
       }
 
       io?.to(roomId).emit("user-left", { roomId, memberId });
+    });
+
+    socket.on("sendMessage", ({ roomId, message }) => {
+      const senderId = socket.data.userId;
+
+      // Log who is in the room
+      const room = io?.sockets.adapter.rooms.get(roomId);
+      console.log("Room members before sending:", Array.from(room || []));
+
+      io?.to(roomId).emit("messageReceived", {
+        roomId,
+        message,
+        senderId,
+        timestamp: Date.now(),
+      });
     });
 
     socket.on("disconnect", async () => {

@@ -21,11 +21,23 @@ import {
   getSingleResultController,
 } from "../api/v1/result";
 import { getCheckParticipateController } from "../api/v1/participates";
-import { getParticipantsQuizController, getAllItemsByIdController } from "../api/v1/user";
+import {
+  getParticipantsQuizController,
+  getAllItemsByIdController,
+} from "../api/v1/user";
 import { getTopParticipantsQuizController } from "../api/v1/leaderboard";
 
 // rooms controller import
-import { getRoomsController, createRoomController, addMembersController, getSingleRoomController, removeMembersController } from "../api/v1/room";
+import {
+  getRoomsController,
+  createRoomController,
+  addMembersController,
+  getSingleRoomController,
+  removeMembersController,
+} from "../api/v1/room";
+
+// room chats controller import
+import { createChatController } from "../api/v1/chat";
 
 router.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({
@@ -43,10 +55,10 @@ router.route("/v1/quizzes").get(getQuizController);
 router.route("/v1/quizzes").post(auth, createQuizController);
 router.route("/v1/quizzes/bulk").post(auth, createBulkQuizController);
 router
-.route("/v1/quizzes/:id")
-.get(getSingleQuizController)
-.patch(auth, ownership("Quiz"), updateQuizController)
-.delete(auth, ownership("Quiz"), deleteQuizController);
+  .route("/v1/quizzes/:id")
+  .get(getSingleQuizController)
+  .patch(auth, ownership("Quiz"), updateQuizController)
+  .delete(auth, ownership("Quiz"), deleteQuizController);
 
 // search quiz route
 router.route("/v1/search/quizzes").get(searchQuizController);
@@ -61,16 +73,26 @@ router
   .get(auth, getCheckParticipateController);
 
 // routes for users
-router.route("/v1/users/participants/:userId").get(getParticipantsQuizController);
+router
+  .route("/v1/users/participants/:userId")
+  .get(getParticipantsQuizController);
 router.route("/v1/users/quizzes/:userId").get(getAllItemsByIdController);
 
 // top participant
 router.route("/v1/topparticipants").get(getTopParticipantsQuizController);
 
 // routes for rooms
-router.route("/v1/rooms").get(getRoomsController).post(auth, createRoomController);
+router
+  .route("/v1/rooms")
+  .get(getRoomsController)
+  .post(auth, createRoomController);
 router.route("/v1/rooms/:roomId").get(auth, getSingleRoomController);
 router.route("/v1/rooms/:roomId/members/add").post(auth, addMembersController);
-router.route("/v1/rooms/:roomId/members/remove").post(auth, removeMembersController);
+router
+  .route("/v1/rooms/:roomId/members/remove")
+  .post(auth, removeMembersController);
+
+// routes for room chats
+router.route("/v1/rooms/:roomId/chat").post(auth, createChatController);
 
 export default router;

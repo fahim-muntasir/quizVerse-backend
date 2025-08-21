@@ -18,10 +18,10 @@ export const removeMembersController = async (
 
     const result = await removeMember({ roomId, memberId: req.user.id });
 
-    getIo().emit("removedMember", {
-      roomId,
-      memberId: req.user.id,
-    });
+    // getIo().emit("removedMember", {
+    //   roomId,
+    //   memberId: req.user.id,
+    // });
 
     // send final response
     successResponse(res, result, "Member removed successfully!", 200);
