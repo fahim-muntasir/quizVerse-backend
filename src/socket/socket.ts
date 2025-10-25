@@ -22,9 +22,31 @@ export const initializeSocket = (server: HttpServer) => {
 
       socket.data.roomId = roomId;
       socket.data.userId = user.id;
+      socket.data.socketId = socket.id;
       console.log("sockets room joined", socket.rooms);
       // Notify others in the room
-      io?.to(roomId).emit("user-joined", { roomId, user });
+      io?.to(roomId).emit("user-joined", { roomId, user, socketId: socket.id });
+    });
+
+    socket.on("offer", ({ to, offer }) => {
+      console.log("Forwarding offer to:", to);
+      io?.to(to).emit("offer", { from: socket.id, offer });
+    });
+
+    socket.on("answer", ({ to, answer }) => {
+      io?.to(to).emit("answer", { from: socket.id, answer });
+    });
+
+    socket.on("ice-candidate", ({ to, candidate }) => {
+      io?.to(to).emit("ice-candidate", { from: socket.id, candidate });
+    });
+
+    // 🗣 Handle user speaking status
+    socket.on("user-speaking", ({ roomId, userId, speaking }) => {
+      console.log(`🎙 ${userId} ${speaking ? "started" : "stopped"} speaking`);
+
+      // Broadcast to others in the same room
+      socket.to(roomId).emit("user-speaking", { userId, speaking });
     });
 
     socket.on("leave-room", async ({ roomId, memberId }) => {
@@ -41,7 +63,7 @@ export const initializeSocket = (server: HttpServer) => {
         console.error("Failed to remove member:", err);
       }
 
-      io?.to(roomId).emit("user-left", { roomId, memberId });
+      io?.to(roomId).emit("user-left", { roomId, memberId, socketId: socket.id });
     });
 
     socket.on("sendMessage", ({ roomId, message }) => {
@@ -64,6 +86,7 @@ export const initializeSocket = (server: HttpServer) => {
 
       const roomId = socket.data.roomId;
       const memberId = socket.data.userId;
+      const socketId = socket.data.socketId;
 
       console.log("User disconnected from room:", roomId, memberId);
 
@@ -75,7 +98,7 @@ export const initializeSocket = (server: HttpServer) => {
           memberId,
         });
 
-        io?.to(roomId).emit("user-left", { roomId, memberId });
+        io?.to(roomId).emit("user-left", { roomId, memberId, socketId });
       }
     });
   });
