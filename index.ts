@@ -10,11 +10,12 @@ const server = http.createServer(app);
 // initialize socket
 initializeSocket(server);
 
-const PORT = process.env.PORT || 4000;
+const PORT = parseInt(process.env.PORT || '4000', 10);
+const HOST = process.env.HOST || '0.0.0.0';
 
 // server will run after connect db
 dbConnection()
   .then(() => {
-    server.listen(PORT, () => console.log(`Server is running on ${PORT} port`));
+    server.listen(PORT, HOST, () => console.log(`Server is running on ${HOST}:${PORT}`));
   })
   .catch((err: unknown) => console.log(err));
