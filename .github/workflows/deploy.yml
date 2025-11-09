@@ -1,0 +1,36 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2️⃣ Login to Docker Hub
+      - name: Docker Hub Login
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      # 3️⃣ Build & push backend image
+      - name: Build & Push Backend Docker Image
+        run: |
+          docker build -t fahimmuntasir0909/backend:latest .
+          docker push fahimmuntasir0909/backend:latest
+
+      # 4️⃣ SSH to KVM server and update backend container
+      - name: Deploy on Server
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /srv/myapp
+            docker-compose pull backend
+            docker-compose up -d backend
